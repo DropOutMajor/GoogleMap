@@ -1,13 +1,12 @@
 package com.example.map
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.google.android.gms.maps.CameraUpdateFactory
+import android.widget.ImageButton
+import android.widget.PopupMenu
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -19,14 +18,30 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        val mapOptionButton: ImageButton = findViewById(R.id.mapMenu)
+        val popUpMenu = PopupMenu(this, mapOptionButton)
+        popUpMenu.menuInflater.inflate(R.menu.map_options, popUpMenu.menu) // Fixed reference
+
+        popUpMenu.setOnMenuItemClickListener { menuItem ->
+            changeMap(menuItem.itemId)
+            true
+        }
+
+        mapOptionButton.setOnClickListener {
+            popUpMenu.show()
+        }
+    }
+
+    private fun changeMap(itemId: Int) {
+        when (itemId) {
+            R.id.normal_map -> mGoogleMap?.mapType = GoogleMap.MAP_TYPE_NORMAL
+            R.id.hybrid_map -> mGoogleMap?.mapType = GoogleMap.MAP_TYPE_HYBRID
+            R.id.satellite_map -> mGoogleMap?.mapType = GoogleMap.MAP_TYPE_SATELLITE
+        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         mGoogleMap = googleMap
-
-        // Add a marker at a specific location (e.g., Sydney, Australia) and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mGoogleMap?.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mGoogleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 10f))
     }
 }
