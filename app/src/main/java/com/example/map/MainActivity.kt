@@ -11,6 +11,8 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
@@ -37,7 +39,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
 
             override fun onPlaceSelected(place: Place) {
+                val add =place.address
+                val id= place.id
                 val latLng = place.latLng!!
+                val marker = addMarker(latLng)
+                marker.title="$add"
+                marker.snippet="$id"
                 zoomMap(latLng)
             }
         })
@@ -74,7 +81,36 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    private fun addMarker(position:LatLng): Marker
+    {
+        val marker= mGoogleMap?.addMarker(MarkerOptions()
+            .position(position)
+            .title("Marker")
+        )
+        return marker!!
+    }
+
     override fun onMapReady(googleMap: GoogleMap) {
         mGoogleMap = googleMap
+
+        mGoogleMap?.setOnMapClickListener {
+            mGoogleMap?.clear()
+            addMarker(it)
+        }
+        mGoogleMap?.setOnMapLongClickListener {
+            addCustomMarker(R.drawable.flag,it)
+        }
+        mGoogleMap?.setOnMarkerClickListener {marker->
+            marker.remove()
+
+            false
+        }
+    }
+
+    private fun addCustomMarker(flag: Int, position: LatLng) {
+        val marker= mGoogleMap?.addMarker(MarkerOptions()
+            .position(position)
+            .title("cusstom")
+        )
     }
 }
