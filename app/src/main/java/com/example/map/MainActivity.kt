@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun addCustomMarker(flag: Int, position: LatLng) {
         val marker= mGoogleMap?.addMarker(MarkerOptions()
             .position(position)
-            .title("cusstom")
+            .title("new")
         )
     }
 }
